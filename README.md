@@ -4,9 +4,10 @@
 
 ### Process
 
-|  날짜   |         내역          |        비고         |
-|:-----:|:-------------------:|:-----------------:|
-| 08/14 | chapter 12 (pygame) | main part of game |
+|    날짜     |         내역          |            비고            |
+|:---------:|:-------------------:|:------------------------:|
+|   08/14   | chapter 12 (pygame) |    main part of game     |
+| 08/14 - 2 | chapter 12 (pygame) | separate setting options |
 
 
 ---

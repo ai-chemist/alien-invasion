@@ -2,6 +2,8 @@ import sys
 
 import pygame
 
+from settings import Settings
+
 class AlienInvasion:
     """게임 전체 관리"""
 
@@ -12,7 +14,12 @@ class AlienInvasion:
         # 프레임 조절을 위한 clock
         self.clock = pygame.time.Clock()
 
-        self.screen = pygame.display.set_mode((1600, 1200))
+        # 분리한 setting 파일
+        self.settings = Settings()
+
+        #
+        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
+
         pygame.display.set_caption('Alien Invasion')
 
         # 배경 색상 설정 - 기본값은 검은색 화면
@@ -27,7 +34,7 @@ class AlienInvasion:
                     sys.exit()
 
             # 매 루프마다 화면 다시 출력
-            self.screen.fill(self.bg_color)
+            self.screen.fill(self.settings.bg_color)
 
             # 가장 최근의 화면 출력
             pygame.display.flip()
