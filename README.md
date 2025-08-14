@@ -4,11 +4,17 @@
 
 ### Process
 
-|    날짜     |         내역          |            비고            |
-|:---------:|:-------------------:|:------------------------:|
-|   08/14   | chapter 12 (pygame) |    main part of game     |
-| 08/14 - 2 | chapter 12 (pygame) | separate setting options |
+|    날짜     |         내역          |            비고            |                   추가                   |
+|:---------:|:-------------------:|:------------------------:|:--------------------------------------:|
+|   08/14   | chapter 12 (pygame) |    main part of game     |                                        |
+| 08/14 - 2 | chapter 12 (pygame) | separate setting options |                                        |
+| 08/14 - 3 | chapter 12 (pygame) |      space_ship.py       | images/spaceship.bmp 크기 조절 및 배경 지우기 필요 |
 
+
+---
+
+#### 추가 사항
+1. images/spaceship.bmp - Piskel 통해 직접 제작
 
 ---
 

@@ -3,6 +3,7 @@ import sys
 import pygame
 
 from settings import Settings
+from space_ship import SpaceShip
 
 class AlienInvasion:
     """게임 전체 관리"""
@@ -21,9 +22,10 @@ class AlienInvasion:
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
 
         pygame.display.set_caption('Alien Invasion')
+        self.space_ship = SpaceShip(self)
 
-        # 배경 색상 설정 - 기본값은 검은색 화면
-        self.bg_color = (230, 230, 230)
+        # 배경 색상 설정 - 기본값은 검은색 화면 : [settings.py]로 넘어감
+        # self.bg_color = (230, 230, 230)
 
     def run_game(self):
         """게임의 기능 실행"""
@@ -35,6 +37,7 @@ class AlienInvasion:
 
             # 매 루프마다 화면 다시 출력
             self.screen.fill(self.settings.bg_color)
+            self.space_ship.blitme()
 
             # 가장 최근의 화면 출력
             pygame.display.flip()
