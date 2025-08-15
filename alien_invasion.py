@@ -18,7 +18,7 @@ class AlienInvasion:
         # 분리한 setting 파일
         self.settings = Settings()
 
-        #
+        # 화면 크기 설정
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
 
         pygame.display.set_caption('Alien Invasion')
@@ -31,6 +31,8 @@ class AlienInvasion:
         """게임의 기능 실행"""
         while True:
             self._check_events()
+            # 우주선 바뀐 위치 전달
+            self.space_ship.update()
             self._update_screen()
             # 프레임 전달 - 초당 60 프레임
             self.clock.tick(60)
@@ -41,6 +43,21 @@ class AlienInvasion:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+            # KEYDOWN 이벤트 - 키 눌림 상태
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    self.space_ship.moving_right = True
+                    # 우측 이동 - 아래 방식으로 사용 시 눌림 상태 감지 불가
+                    # self.space_ship.rect.x += 1
+                elif event.key == pygame.K_LEFT:
+                    # 좌측 이동
+                    self.space_ship.moving_left = True
+            # KEYUP 이벤트 - 키보드 키가 올라감
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_RIGHT:
+                    self.space_ship.moving_right = False
+                elif event.key == pygame.K_LEFT:
+                    self.space_ship.moving_left = False
 
     def _update_screen(self):
         """화면 업데이트 메서드 - run_game()에서 분리"""
