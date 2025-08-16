@@ -4,6 +4,7 @@ import pygame
 
 from settings import Settings
 from space_ship import SpaceShip
+from bullet import Bullet
 
 class AlienInvasion:
     """게임 전체 관리"""
@@ -19,15 +20,16 @@ class AlienInvasion:
         self.settings = Settings()
 
         # 창모드 - 화면 크기 설정
-        # self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
+        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
 
         # 전체 화면 모드
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        self.settings.screen_width = self.screen.get_rect().width
-        self.settings.screen_height = self.screen.get_rect().height
+        # self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        # self.settings.screen_width = self.screen.get_rect().width
+        # self.settings.screen_height = self.screen.get_rect().height
 
         pygame.display.set_caption('Alien Invasion')
         self.space_ship = SpaceShip(self)
+        self.bullets = pygame.sprite.Group()
 
         # 배경 색상 설정 - 기본값은 검은색 화면 : [settings.py]로 넘어감
         # self.bg_color = (230, 230, 230)
@@ -38,6 +40,8 @@ class AlienInvasion:
             self._check_events()
             # 우주선 바뀐 위치 전달
             self.space_ship.update()
+            # 탄환 관리 - 메서드로 분리
+            self._update_bullet()
             self._update_screen()
             # 프레임 전달 - 초당 60 프레임
             self.clock.tick(60)
@@ -68,6 +72,9 @@ class AlienInvasion:
         # Esc 키를 눌러 종료
         elif event.key == pygame.K_ESCAPE:
             sys.exit()
+        # Spacebar 를 눌러 탄환 발사
+        elif event.key == pygame.K_SPACE:
+            self._fire_bullet()
 
     def _check_keyup_events(self, event):
         """keyup 이벤트 처리"""
@@ -76,10 +83,33 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.space_ship.moving_left = False
 
+    def _fire_bullet(self):
+        """탄환 추가 후 그룹에 추가"""
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
+
+    def _update_bullet(self):
+        """탄환 위치 업데이트 및 화면 벗어난 탄환 제거 역할 분리"""
+        # 탄환 위치 업데이트
+        self.bullets.update()
+
+        # 화면 밖의 탄환 제거 - 리스트를 직접 순회해서는 안되기에 .copy() 메서드로 사본 전달
+        for bullet in self.bullets.copy():
+            # 화면 밖으로 넘어가면
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
+            # 탄환의 개수 출력 (테스트용)
+            # print(len(self.bullets))
+
     def _update_screen(self):
         """화면 업데이트 메서드 - run_game()에서 분리"""
         # 매 루프마다 화면 다시 출력
         self.screen.fill(self.settings.bg_color)
+        # for 루프로 bullets 내부의 객체들 출력
+        for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
+
         self.space_ship.blitme()
 
         # 가장 최근의 화면 출력

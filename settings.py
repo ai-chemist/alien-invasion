@@ -6,7 +6,17 @@ class Settings:
         # 화면
         self.screen_width = 1600
         self.screen_height = 1200
-        self.bg_color = (230, 230, 230)
+        # 연한 회색
+        # self.bg_color = (230, 230, 230)
+        self.bg_color = (20, 20, 20)
 
         # 우주선 속력
         self.ship_speed = 1.5
+
+        # 탄막 설정
+        self.bullet_speed = 2.5
+        self.bullet_width = 3
+        self.bullet_height = 15
+        self.bullet_color = (220, 190, 10)
+        # 탄환 최대 개수 제한
+        self.bullets_allowed = 20
