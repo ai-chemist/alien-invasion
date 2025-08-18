@@ -15,6 +15,7 @@
 | 08/16 - 2 | chapter 12 (pygame) |           add bullets (Sprite)            | bullet이 위로 올라갈 때 y좌표를 -= 연산하던 이유 (컴퓨터 그래픽스 분야에선 통상 좌표계와 다른 좌표 체계가 존재 |
 | 08/16 - 3 | chapter 12 (pygame) |                refactoring                |                         bullet 관련 기능 메서드로 분리                         |
 |   08/18   | chapter 13 (pygame) |                make alien                 |                        alien 부분 클래스 및 메서드 작성                         |
+| 08/18 - 2 | chapter 13 (pygame) |      game over and players left life      |                        플래그 및 게임 상태 관리용 클래스 작성                        |
 
 ---
 

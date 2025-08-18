@@ -38,6 +38,11 @@ class SpaceShip:
         # self.x를 이용해 self.rect.x 값 업데이트 - 화면에 표시될 값은 rect.x 의 영향을 받기에 반드시 설정해야 함
         self.rect.x = self.x
 
+    def center_ship(self):
+        """우주선 화면 하단 중앙으로 이동"""
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)
+
     def blitme(self):
         """현재 위치에 우주선 출력"""
         self.screen.blit(self.image, self.rect)

@@ -1,8 +1,10 @@
 import sys
+from time import sleep
 
 import pygame
 
 from settings import Settings
+from game_stats import GameStats
 from space_ship import SpaceShip
 from bullet import Bullet
 from alien import Alien
@@ -29,6 +31,10 @@ class AlienInvasion:
         # self.settings.screen_height = self.screen.get_rect().height
 
         pygame.display.set_caption('Alien Invasion')
+        
+        # 게임 기록 관리 인스턴스
+        self.stats = GameStats(self)
+        
         self.space_ship = SpaceShip(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
@@ -38,16 +44,21 @@ class AlienInvasion:
         # 배경 색상 설정 - 기본값은 검은색 화면 : [settings.py]로 넘어감
         # self.bg_color = (230, 230, 230)
 
+        # 게임 활성 상태 관리 플래그
+        self.game_active = True
+
     def run_game(self):
         """게임의 기능 실행"""
         while True:
             self._check_events()
-            # 우주선 바뀐 위치 전달
-            self.space_ship.update()
-            # 탄환 관리 - 메서드로 분리
-            self._update_bullet()
-            # 외계인 관리 - 메서드
-            self._update_aliens()
+
+            if self.game_active:
+                # 우주선 바뀐 위치 전달
+                self.space_ship.update()
+                # 탄환 관리 - 메서드로 분리
+                self._update_bullets()
+                # 외계인 관리 - 메서드
+                self._update_aliens()
             self._update_screen()
             # 프레임 전달 - 초당 60 프레임
             self.clock.tick(60)
@@ -95,7 +106,7 @@ class AlienInvasion:
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
 
-    def _update_bullet(self):
+    def _update_bullets(self):
         """탄환 위치 업데이트 및 화면 벗어난 탄환 제거 역할 분리"""
         # 탄환 위치 업데이트
         self.bullets.update()
@@ -107,6 +118,20 @@ class AlienInvasion:
                 self.bullets.remove(bullet)
             # 탄환의 개수 출력 (테스트용)
             # print(len(self.bullets))
+
+        self._check_bullet_alien_collisions()
+
+    def _check_bullet_alien_collisions(self):
+        """탄환과 외계인 충돌 관리"""
+        # 탄환과 외계인 충돌(collision) 감지 - 탄환과 외계인 제거
+        # True (dokilla) 인수 부분 - 충돌한 요소 제거 groupcollide() - 그룹 요소 사이의 충돌 감지
+        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+
+        # 외계인이 남아있지 않을 시
+        if not self.aliens:
+            # 외계인 제거 및 새 부대 반환
+            self.bullets.empty()
+            self._create_fleet()
 
     def _create_fleet(self):
         """외계인 부대 생성"""
@@ -146,12 +171,46 @@ class AlienInvasion:
         for alien in self.aliens.sprites():
             alien.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
+        
+    def _ship_hit(self):
+        """외계인이 우주선과 충돌 시 실행"""
+        if self.stats.space_ships_left > 1:
+            # space_ships_left 감소
+            self.stats.space_ships_left -= 1
+        
+            # 남은 탄환, 외계인 제거
+            self.bullets.empty()
+            self.aliens.empty()
+        
+            # 외계인 부대 새로 생성 및 우주선 위치 초기화
+            self._create_fleet()
+            self.space_ship.center_ship()
+        
+            # 게임 일시 중지
+            sleep(0.5)
+        else:
+            self.game_active = False
+        
+    def _check_aliens_bottom(self):
+        """화면 하단에 도달한 외계인 감지"""
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= self.settings.screen_height:
+                # 우주선이 외계인과 충돌할 때와 같은 반응
+                self._ship_hit()
+                break
 
     def _update_aliens(self):
         """부대에 속한 모든 외계인 위치 업데이트"""
         self._check_fleet_edges()
         self.aliens.update()
 
+        # 외계인과 우주선의 충돌 검색 spritecollideany() - 스프라이트와 그룹의 요소 중 충돌 감지
+        if pygame.sprite.spritecollideany(self.space_ship, self.aliens):
+            # print("Spaceship damaged")
+            self._ship_hit()
+
+        # 화면 하단에 도달한 외계인 감지
+        self._check_aliens_bottom()
 
     def _update_screen(self):
         """화면 업데이트 메서드 - run_game()에서 분리"""

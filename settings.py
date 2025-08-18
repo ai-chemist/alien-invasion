@@ -10,8 +10,9 @@ class Settings:
         # self.bg_color = (230, 230, 230)
         self.bg_color = (20, 20, 20)
 
-        # 우주선 속력
+        # 우주선 설정
         self.ship_speed = 2.5
+        self.space_ship_limit = 3
 
         # 탄막 설정
         self.bullet_speed = 4.5
@@ -23,6 +24,6 @@ class Settings:
 
         # 외계인 설정
         self.alien_speed = 1.5
-        self.fleet_drop_speed = 15
+        self.fleet_drop_speed = 150
         # 1 == right / -1 == left
         self.fleet_direction = 1
