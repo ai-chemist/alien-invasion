@@ -5,6 +5,7 @@ import pygame
 
 from settings import Settings
 from game_stats import GameStats
+from button import Button
 from space_ship import SpaceShip
 from bullet import Bullet
 from alien import Alien
@@ -44,8 +45,11 @@ class AlienInvasion:
         # 배경 색상 설정 - 기본값은 검은색 화면 : [settings.py]로 넘어감
         # self.bg_color = (230, 230, 230)
 
-        # 게임 활성 상태 관리 플래그
-        self.game_active = True
+        # 게임 활성 상태 관리 플래그 - 비활성 상태로 시작
+        self.game_active = False
+
+        # 플레이 버튼 생성 - 인스턴스만 생성, 화면에 출력 필요
+        self.play_button = Button(self, "Click to Play")
 
     def run_game(self):
         """게임의 기능 실행"""
@@ -75,6 +79,11 @@ class AlienInvasion:
             # KEYUP 이벤트 - 키보드 키가 올라감
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+            # MOUSEBUTTONDOWN 이벤트 - 마우스 클릭
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                # 마우스가 클릭된 지점의 좌표를 튜플로 반환
+                mouse_pos = pygame.mouse.get_pos()
+                self._check_play_button(mouse_pos)
 
     # key 이벤트 메서드 분리
     def _check_keydown_events(self, event):
@@ -99,6 +108,25 @@ class AlienInvasion:
             self.space_ship.moving_right = False
         elif event.key == pygame.K_LEFT:
             self.space_ship.moving_left = False
+
+    def _check_play_button(self, mouse_pos):
+        """플레이어가 'play' 버튼을 클릭했는지 여부 확인"""
+        # button_clicked 변수 - game_active 활성 상태 비교 목적으로 분리
+        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        # collidepoint() 메서드로 클릭된 지점(mouse_pos)이 play_button.rect 내부에 있는지 확인
+        # if self.play_button.rect.collidepoint(mouse_pos):
+        if button_clicked and not self.game_active:
+            # 게임 기록 초기화
+            self.stats.reset_stats()
+            self.game_active = True
+
+            # 남은 탄환 및 외계인 제거
+            self.bullets.empty()
+            self.aliens.empty()
+
+            # 외계인 부대 새로 생성 후 플레이어 위치 초기화
+            self._create_fleet()
+            self.space_ship.center_ship()
 
     def _fire_bullet(self):
         """탄환 추가 후 그룹에 추가"""
@@ -222,6 +250,10 @@ class AlienInvasion:
 
         self.space_ship.blitme()
         self.aliens.draw(self.screen)
+
+        # game_active 상태가 False 일 경우에만 버튼 출력
+        if not self.game_active:
+            self.play_button.draw_button()
 
         # 가장 최근의 화면 출력
         pygame.display.flip()

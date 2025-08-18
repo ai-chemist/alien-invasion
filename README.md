@@ -16,6 +16,7 @@
 | 08/16 - 3 | chapter 12 (pygame) |                refactoring                |                         bullet 관련 기능 메서드로 분리                         |
 |   08/18   | chapter 13 (pygame) |                make alien                 |                        alien 부분 클래스 및 메서드 작성                         |
 | 08/18 - 2 | chapter 13 (pygame) |      game over and players left life      |                        플래그 및 게임 상태 관리용 클래스 작성                        |
+| 08/18 - 3 | chapter 14 (pygame) |    game start button and active status    |                  시작 버튼 및 버튼 클래스 작성 / 게임 활성 상태 관리 추가                  |
 
 ---
 

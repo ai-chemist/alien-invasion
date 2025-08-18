@@ -11,19 +11,19 @@ class Settings:
         self.bg_color = (20, 20, 20)
 
         # 우주선 설정
-        self.ship_speed = 2.5
+        self.ship_speed = 4.5
         self.space_ship_limit = 3
 
         # 탄막 설정
-        self.bullet_speed = 4.5
-        self.bullet_width = 3
+        self.bullet_speed = 6.5
+        self.bullet_width = 5
         self.bullet_height = 15
         self.bullet_color = (220, 190, 10)
         # 탄환 최대 개수 제한
-        self.bullets_allowed = 20
+        self.bullets_allowed = 15
 
         # 외계인 설정
-        self.alien_speed = 1.5
-        self.fleet_drop_speed = 150
+        self.alien_speed = 2
+        self.fleet_drop_speed = 50
         # 1 == right / -1 == left
         self.fleet_direction = 1
