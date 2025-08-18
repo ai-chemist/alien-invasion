@@ -5,6 +5,7 @@ import pygame
 from settings import Settings
 from space_ship import SpaceShip
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion:
     """게임 전체 관리"""
@@ -30,6 +31,9 @@ class AlienInvasion:
         pygame.display.set_caption('Alien Invasion')
         self.space_ship = SpaceShip(self)
         self.bullets = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
+
+        self._create_fleet()
 
         # 배경 색상 설정 - 기본값은 검은색 화면 : [settings.py]로 넘어감
         # self.bg_color = (230, 230, 230)
@@ -42,6 +46,8 @@ class AlienInvasion:
             self.space_ship.update()
             # 탄환 관리 - 메서드로 분리
             self._update_bullet()
+            # 외계인 관리 - 메서드
+            self._update_aliens()
             self._update_screen()
             # 프레임 전달 - 초당 60 프레임
             self.clock.tick(60)
@@ -102,6 +108,51 @@ class AlienInvasion:
             # 탄환의 개수 출력 (테스트용)
             # print(len(self.bullets))
 
+    def _create_fleet(self):
+        """외계인 부대 생성"""
+        # 외계인 하나 생성 (공간이 없을 때까지 반복)
+        # 사이의 공간은 외계인의 너비와 같음 + 높이
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+
+        current_x, current_y = alien_width, alien_height
+        # 외계인 + 사이 공간이므로 2 * alien_width
+        while current_y < (self.settings.screen_height - 3 * alien_height):
+            while current_x < (self.settings.screen_width - 2 * alien_width):
+                self._create_alien(current_x, current_y)
+                current_x += 2 * alien_width
+
+            # 한 줄이 끝났으니 x값 초기화, y값 증가
+            current_x = alien_width
+            current_y += 2 * alien_height
+
+    def _create_alien(self, x_position, y_position):
+        """외계인 하나 생성 후 배치"""
+        new_alien = Alien(self)
+        new_alien.x = x_position
+        new_alien.rect.x = x_position
+        new_alien.rect.y = y_position
+        self.aliens.add(new_alien)
+
+    def _check_fleet_edges(self):
+        """외계인이 화면 경계에 도달 시 실행"""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        """전체 부대를 한 줄 내리고 이동 방향 좌우 반전"""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+
+    def _update_aliens(self):
+        """부대에 속한 모든 외계인 위치 업데이트"""
+        self._check_fleet_edges()
+        self.aliens.update()
+
+
     def _update_screen(self):
         """화면 업데이트 메서드 - run_game()에서 분리"""
         # 매 루프마다 화면 다시 출력
@@ -111,6 +162,7 @@ class AlienInvasion:
             bullet.draw_bullet()
 
         self.space_ship.blitme()
+        self.aliens.draw(self.screen)
 
         # 가장 최근의 화면 출력
         pygame.display.flip()
