@@ -1,10 +1,12 @@
 import pygame
+from pygame.sprite import Sprite
 
-class SpaceShip:
+class SpaceShip(Sprite):
     """우주선 - 플레이어"""
 
     def __init__(self, ai_game):
         """우주선 초기화 및 시작 설정"""
+        super().__init__()
         self.screen = ai_game.screen
         # 설정 가져오기
         self.settings = ai_game.settings

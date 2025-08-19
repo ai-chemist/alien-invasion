@@ -17,13 +17,24 @@
 |   08/18   | chapter 13 (pygame) |                make alien                 |                        alien 부분 클래스 및 메서드 작성                         |
 | 08/18 - 2 | chapter 13 (pygame) |      game over and players left life      |                        플래그 및 게임 상태 관리용 클래스 작성                        |
 | 08/18 - 3 | chapter 14 (pygame) |    game start button and active status    |                  시작 버튼 및 버튼 클래스 작성 / 게임 활성 상태 관리 추가                  |
-
+|   08/19   | chapter 14 (pygame) |           scoreboard and level            |                        레벨 증가, 점수, 최고 점수 등 출력                         |
+|   08/19   | book part finished  |                                           |                  free refactoring and make new part                  |
 ---
 
 #### 추가 사항
 1. images/spaceship.bmp - Piskel 통해 직접 제작
 2. 컴퓨터 그래픽스 좌표계 : 정확하게는 좌측 최상단의 좌표가 (0, 0) y축은 아래로 증가, x축은 우측으로 증가
-3. images/alien.bmp - 이미지 새로 제작 필요
+3. images/alien.bmp - ~~이미지 새로 제작 필요~~ 제작 완료
+---
+
+#### 추후 할 것
+- 외계인 부대 랜덤 위치에 나오게
+- 플레이어 강화 아이템
+- 레벨 및 점수판 디자인
+- 플레이어 남은 목숨 -> 아이콘 새로 제작 후 적용
+- 탄환 발사 시 사운드 출력
+- 
+
 ---
 
 *Based on the book by **"Eric Matthes"***

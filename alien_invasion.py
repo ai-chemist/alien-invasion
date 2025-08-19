@@ -5,6 +5,7 @@ import pygame
 
 from settings import Settings
 from game_stats import GameStats
+from scoreboard import Scoreboard
 from button import Button
 from space_ship import SpaceShip
 from bullet import Bullet
@@ -35,6 +36,9 @@ class AlienInvasion:
         
         # 게임 기록 관리 인스턴스
         self.stats = GameStats(self)
+
+        # 점수판
+        self.scoreboard = Scoreboard(self)
         
         self.space_ship = SpaceShip(self)
         self.bullets = pygame.sprite.Group()
@@ -116,8 +120,13 @@ class AlienInvasion:
         # collidepoint() 메서드로 클릭된 지점(mouse_pos)이 play_button.rect 내부에 있는지 확인
         # if self.play_button.rect.collidepoint(mouse_pos):
         if button_clicked and not self.game_active:
+            # 게임 설정 초기화
+            self.settings.initialize_dynamic_settings()
             # 게임 기록 초기화
             self.stats.reset_stats()
+            self.scoreboard.prep_score()
+            self.scoreboard.prep_level()
+            self.scoreboard.prep_ships()
             self.game_active = True
 
             # 남은 탄환 및 외계인 제거
@@ -155,11 +164,23 @@ class AlienInvasion:
         # True (dokilla) 인수 부분 - 충돌한 요소 제거 groupcollide() - 그룹 요소 사이의 충돌 감지
         collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
 
+        if collisions:
+            # 탄환에 맞은 외계인 숫자 * 점수
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+            self.scoreboard.prep_score()
+            self.scoreboard.check_best_score()
+
         # 외계인이 남아있지 않을 시
         if not self.aliens:
             # 외계인 제거 및 새 부대 반환
             self.bullets.empty()
             self._create_fleet()
+            self.settings.increase_speed()
+
+            # 레벨 증가
+            self.stats.level += 1
+            self.scoreboard.prep_level()
 
     def _create_fleet(self):
         """외계인 부대 생성"""
@@ -177,7 +198,7 @@ class AlienInvasion:
 
             # 한 줄이 끝났으니 x값 초기화, y값 증가
             current_x = alien_width
-            current_y += 2 * alien_height
+            current_y += 1.5 * alien_height
 
     def _create_alien(self, x_position, y_position):
         """외계인 하나 생성 후 배치"""
@@ -202,9 +223,12 @@ class AlienInvasion:
         
     def _ship_hit(self):
         """외계인이 우주선과 충돌 시 실행"""
-        if self.stats.space_ships_left > 1:
+        if self.stats.space_ships_left > 0:
             # space_ships_left 감소
             self.stats.space_ships_left -= 1
+
+            # 점수판 업데이트
+            self.scoreboard.prep_ships()
         
             # 남은 탄환, 외계인 제거
             self.bullets.empty()
@@ -250,6 +274,9 @@ class AlienInvasion:
 
         self.space_ship.blitme()
         self.aliens.draw(self.screen)
+
+        # 점수 정보 출력
+        self.scoreboard.show_score()
 
         # game_active 상태가 False 일 경우에만 버튼 출력
         if not self.game_active:
